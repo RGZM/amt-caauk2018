@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>AMT | EAA2018 Example</title>
+    <title>AMT | EAA 2018 Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="js/amt.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -46,27 +46,49 @@
             width: 90% !important;
             height: 100% !important;
         }
+
+        div.info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: auto;
+            height: auto;
+            border: 1px dashed grey;
+            background: #ffcc80;
+            padding-top: 0px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-bottom: 15px;
+        }
+        div.logos {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: auto;
+            height: auto;
+        }
     </style>
     <script>
-        var EAA = {};
-        EAA.prefix = "http://rgzm.de/datingmechanism#";
-        EAA.graph = {};
-        EAA.edit = false;
-        EAA.thisNodes = [];
-        EAA.thisEdges = [];
-        EAA.inverse = false;
-        EAA.mode = "limesConnections";
-        EAA.reasoning = false;
+        var _AMT = {};
+        _AMT.prefix = "http://rgzm.de/datingmechanism#";
+        _AMT.graph = {};
+        _AMT.edit = false;
+        _AMT.thisNodes = [];
+        _AMT.thisEdges = [];
+        _AMT.inverse = false;
+        _AMT.mode = "example1";
+        _AMT.reasoning = false;
+        _AMT.rdf = "";
         var update = function() {
-            EAA.amt = new AMT();
-            EAA.amt.load(function() {
-                var graph = EAA.amt.getGraph(false, true);
-                EAA.graph.nodes = new vis.DataSet(graph.nodes);
-                EAA.graph.edges = new vis.DataSet(graph.edges);
+            _AMT.amt = new AMT();
+            _AMT.amt.load(function() {
+                var graph = _AMT.amt.getGraph(false, true);
+                _AMT.graph.nodes = new vis.DataSet(graph.nodes);
+                _AMT.graph.edges = new vis.DataSet(graph.edges);
             });
 
-            //if (EAA.amt) {
-            setTimeout(function(){
+            //if (_AMT.amt) {
+            setTimeout(function() {
                 var options = {
                     layout: {
                         randomSeed: 5
@@ -74,162 +96,33 @@
                     physics: true
                 };
                 new vis.Network(document.getElementById("graph"), {
-                    nodes: EAA.graph.nodes,
-                    edges: EAA.graph.edges
+                    nodes: _AMT.graph.nodes,
+                    edges: _AMT.graph.edges
                 }, options);
-                console.log(EAA.reasoning);
-                var updated = EAA.amt.getGraph(EAA.reasoning, false);
-                //var updated = EAA.amt.getGraph(false, false);
-                EAA.graph.edges.clear();
-                EAA.graph.nodes.clear();
-                /*
-                	Hier wird spezifiziert, wie die Knoten aussehen sollen
-                */
-                //console.info("load nodes");
+                console.log("reasoning", _AMT.reasoning);
+                var updated = _AMT.amt.getGraph(_AMT.reasoning, false);
+                _AMT.graph.edges.clear();
+                _AMT.graph.nodes.clear();
                 for (var i in updated.nodes) {
                     updated.nodes[i].length = 10 / updated.nodes[i].width;
-                    if (!EAA.edit) {
+                    if (!_AMT.edit) {
                         updated.nodes[i].chosen = false;
                     }
-                    if (updated.nodes[i].concept === EAA.prefix + "Potter") {
-                        if (EAA.mode === "potterSiteLimes") {
-                            updated.nodes[i].color = {
-                                background: 'Crimson',
-                                border: 'Crimson',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'red'
-                                }
-                            };
-                            updated.nodes[i].shape = "square";
-                            updated.nodes[i].font = {
-                                size: 16,
-                                face: 'monospace'
-                            };
-                            updated.nodes[i].size = 10;
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
-                    } else if (updated.nodes[i].concept === EAA.prefix + "Site") {
-                        if (EAA.mode === "siteLimesProvince" || EAA.mode === "potterSiteLimes") {
-                            updated.nodes[i].color = {
-                                background: 'green',
-                                border: 'green',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'green'
-                                }
-                            };
-                            updated.nodes[i].shape = "star";
-                            updated.nodes[i].font = {
-                                size: 16,
-                                face: 'monospace'
-                            };
-                            updated.nodes[i].size = 20;
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
-                    } else if (updated.nodes[i].concept === EAA.prefix + "LimesPart") {
-                        if (EAA.mode === "siteLimesProvince" || EAA.mode === "potterSiteLimes" || EAA.mode === "limesConnections" || EAA.mode === "limesAllen") {
-                            updated.nodes[i].color = {
-                                background: 'coral',
-                                border: 'coral',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'coral'
-                                }
-                            };
-                            updated.nodes[i].shape = "diamond";
-                            updated.nodes[i].font = {
-                                size: 16,
-                                face: 'monospace'
-                            };
-                            updated.nodes[i].size = 20;
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
-                    } else if (updated.nodes[i].concept === EAA.prefix + "Province") {
-                        if (EAA.mode === "siteLimesProvince") {
-                            updated.nodes[i].color = {
-                                background: 'GoldenRod',
-                                border: 'GoldenRod',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'GoldenRod'
-                                }
-                            };
-                            updated.nodes[i].shape = "dot";
-                            updated.nodes[i].font = {
-                                size: 16,
-                                face: 'monospace'
-                            };
-                            updated.nodes[i].size = 10;
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
-                    } else if (updated.nodes[i].concept === EAA.prefix + "SiteGeom") {
-                        if ($("#showGeomConcepts").is(":checked")) {
-                            updated.nodes[i].color = {
-                                background: 'blue',
-                                border: 'blue',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'blue'
-                                }
-                            };
-                            updated.nodes[i].font = {
-                                size: 8,
-                                face: 'monospace'
-                            };
-                            var geojson = JSON.parse(updated.nodes[i].label);
-                            var thislabel = "";
-                            thislabel = JSON.stringify(geojson.coordinates);
-                            updated.nodes[i].shape = "dot";
-                            updated.nodes[i].size = 5;
-                            updated.nodes[i].label = thislabel;
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
-                    } else if (updated.nodes[i].concept === EAA.prefix + "LimesPartGeom") {
-                        if ($("#showGeomConcepts").is(":checked")) {
-                            updated.nodes[i].color = {
-                                background: 'blue',
-                                border: 'blue',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'blue'
-                                }
-                            };
-                            updated.nodes[i].font = {
-                                size: 8,
-                                face: 'monospace'
-                            };
-                            updated.nodes[i].shape = "square";
-                            updated.nodes[i].size = 5;
-                            updated.nodes[i].label = "LineString";
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
-                    } else if (updated.nodes[i].concept === EAA.prefix + "ProvinceGeom") {
-                        if ($("#showGeomConcepts").is(":checked")) {
-                            updated.nodes[i].color = {
-                                background: 'blue',
-                                border: 'blue',
-                                highlight: {
-                                    background: 'white',
-                                    border: 'blue'
-                                }
-                            };
-                            updated.nodes[i].font = {
-                                size: 8,
-                                face: 'monospace'
-                            };
-                            updated.nodes[i].shape = "square";
-                            updated.nodes[i].size = 5;
-                            updated.nodes[i].label = "Polygon";
-                        } else {
-                            updated.nodes[i].hidden = true;
-                        }
+                    if (updated.nodes[i].concept === _AMT.prefix + "LimesPart") {
+                        updated.nodes[i].color = {
+                            background: 'coral',
+                            border: 'coral',
+                            highlight: {
+                                background: 'white',
+                                border: 'coral'
+                            }
+                        };
+                        updated.nodes[i].shape = "dot";
+                        updated.nodes[i].font = {
+                            size: 16,
+                            face: 'monospace'
+                        };
+                        updated.nodes[i].size = 20;
                     } else {
                         updated.nodes[i].color = {
                             background: 'grey',
@@ -242,148 +135,13 @@
                         updated.nodes[i].shape = "box";
                     }
                 }
-                /*
-                	Hier wird spezifiziert wie die Kanten aussehen sollen, welche angezeigt werden sollen, etc
-                */
-                //console.info("load edges");
                 for (var i in updated.edges) {
                     updated.edges[i].arrowStrikethrough = false;
                     updated.edges[i].chosen = false;
-                    if (updated.edges[i].width < 0.0001) {
+                    if (updated.edges[i].width < 0.0000001) {
                         updated.edges[i].hidden = true;
                     }
-                    var roleWithPrefix = EAA.prefix;
-                    if (updated.edges[i].role === EAA.prefix + "connectedsl") {
-                        if (EAA.mode === "potterSiteLimes" || EAA.mode === "siteLimesProvince") {
-                            updated.edges[i].color = {
-                                color: "FORESTGREEN",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 500;
-                            updated.edges[i].smooth = false;
-                            /*if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }*/
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role === EAA.prefix + "connectedps") {
-                        //console.log(updated.edges[i].role);
-                        if (EAA.mode === "potterSiteLimes") {
-                            updated.edges[i].color = {
-                                color: "FORESTGREEN",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 250;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role === EAA.prefix + "connectedpl") {
-                        //console.log(updated.edges[i].role);
-                        if (EAA.mode === "potterSiteLimes") {
-                            updated.edges[i].color = {
-                                color: "FORESTGREEN",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 500;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role === EAA.prefix + "spatialconnectedlp") {
-                        if (EAA.mode === "siteLimesProvince") {
-                            updated.edges[i].color = {
-                                color: "FORESTGREEN",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 100;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role === EAA.prefix + "spatialconnectedsp") {
-                        //console.log(updated.edges[i].role);
-                        if (EAA.mode === "siteLimesProvince") {
-                            updated.edges[i].color = {
-                                color: "FORESTGREEN",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 100;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role === EAA.prefix + "connectedll") {
-                        if (EAA.mode === "limesConnections") {
-                            updated.edges[i].color = {
-                                color: "FORESTGREEN",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 250;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role === EAA.prefix + "connectedlll") {
-                        if (EAA.mode === "limesConnections") {
-                            updated.edges[i].color = {
-                                color: "TOMATO",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 250;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
-                    if (updated.edges[i].role.includes("geom")) {
-                        if ($("#showGeomConcepts").is(":checked")) {
-                            updated.edges[i].color = {
-                                color: "blue",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = true;
-                            updated.edges[i].length = 50;
-                            updated.edges[i].smooth = false;
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                updated.edges[i].hidden = true;
-                            }
-                        } else {
-                            updated.edges[i].hidden = true;
-                        }
-                    }
+                    var roleWithPrefix = _AMT.prefix;
                     if (updated.edges[i].role === roleWithPrefix + "e" ||
                         updated.edges[i].role === roleWithPrefix + "b" ||
                         updated.edges[i].role === roleWithPrefix + "a" ||
@@ -398,89 +156,35 @@
                         updated.edges[i].role === roleWithPrefix + "f" ||
                         updated.edges[i].role === roleWithPrefix + "fi"
                     ) {
-                        if (EAA.mode === "limesAllen") {
-                            updated.edges[i].color = {
-                                color: "blue",
-                                highlight: "black"
-                            };
-                            updated.edges[i].dashes = false;
-                            updated.edges[i].length = 250;
-                            updated.edges[i].smooth = true;
-                            updated.edges[i].label = updated.edges[i].role.replace(EAA.prefix, "");
-                            if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
-                                //updated.edges[i].hidden = true;
-                            }
+                        updated.edges[i].color = {
+                            color: "blue",
+                            highlight: "black"
+                        };
+                        updated.edges[i].length = 250;
+                        updated.edges[i].smooth = false;
+                        if (_AMT.mode==="example5" || _AMT.mode==="example6") {
+                            updated.edges[i].label = updated.edges[i].role.replace(_AMT.prefix, "") + ": " + Math.floor(updated.edges[i].width * 1000) / 1000;
                         } else {
-                            updated.edges[i].hidden = true;
+                            updated.edges[i].label = updated.edges[i].role.replace(_AMT.prefix, "") + ": " + Math.floor(updated.edges[i].width * 100) / 100;
+                        }
+                        updated.edges[i].arrows = "to";
+                        if (updated.edges[i].from.localeCompare(updated.edges[i].to) >= 0) {
+                            //updated.edges[i].hidden = true;
                         }
                     }
-                    if (!updated.edges[i].hidden) {
-                        //console.log(updated.edges[i].role, updated.edges[i].width);
-                    }
                 }
-                EAA.graph.nodes.update(updated.nodes);
-                if ($("#showEdges").is(":checked")) {
-                    EAA.graph.edges.update(updated.edges);
-                }
-                EAA.thisNodes = updated.nodes;
-                EAA.thisEdges = updated.edges;
-            //}
-        }, 1000);
+                _AMT.graph.nodes.update(updated.nodes);
+                _AMT.graph.edges.update(updated.edges);
+                _AMT.thisNodes = updated.nodes;
+                _AMT.thisEdges = updated.edges;
+                $("#title").html($("#amt-viz option:selected").text());
+            }, 1000);
         };
-        var edit = function() {
-            if (EAA.reasoning) {
-                EAA.reasoning = false;
-                $("#r-but").removeClass("red");
-                $("#r-but").addClass("blue");
-            } else {
-                EAA.reasoning = true;
-                $("#r-but").removeClass("blue");
-                $("#r-but").addClass("red");
-            }
-            update();
-        };
-
         $(function() {
             update();
-            /*EAA.amt = new AMT();
-            EAA.amt.load(function() {
-                $(".edit").hide();
-                $("#r-but").show();
-                $("#e-but").hide();
-                var graph = EAA.amt.getGraph(false, true);
-                EAA.graph.nodes = new vis.DataSet(graph.nodes);
-                EAA.graph.edges = new vis.DataSet(graph.edges);
-                var options = {
-                    layout: {
-                        randomSeed: 12
-                    },
-                    physics: false
-                };
-                var network = new vis.Network(document.getElementById("graph"), {
-                    nodes: EAA.graph.nodes,
-                    edges: EAA.graph.edges
-                }, options);
-                update();
-                /*network.on("selectNode", function(params) {
-                    if (EAA.edit)
-                        openModal(params.nodes[0]);
-                });
-                //switchOntology();
-                //info();
-            });*/
-            $("#info").modal({
+            $("#rdfModal").modal({
                 complete: function() {
-                    info(true);
-                }
-            });
-            $("#exportModal").modal({
-                complete: function() {
-                    exportOptions(true);
-                }
-            });
-            $("#loadModal").modal({
-                complete: function() {
-                    loadJSONGraph(true);
+                    openRdfModal(true);
                 }
             });
             $("#graphPropModal").modal({
@@ -489,36 +193,19 @@
                     openGraphPropModal(true);
                 }
             });
-            $(".edit").hide();
-            $("#store").hide();
         });
-        var info = function(close) {
-            if (close)
-                $("#info").modal("close");
-            else
-                $("#info").modal("open");
-        }
-        var exportOptions = function(close) {
-            if (close)
-                $("#exportModal").modal("close");
-            else
-                $("#exportModal").modal("open");
-        }
-        var loadJSONGraph = function(close) {
-            $("#json").val("");
-            $("#json").height(75);
-            if (close)
-                $("#loadModal").modal("close");
-            else
-                $("#loadModal").modal("open");
-        }
-        /*var propModal = function(close) {
-            $("#amt-viz").material_select();
-            if (close)
-                $("#propertiesModal").modal("close");
-            else
-                $("#propertiesModal").modal("open");
-        }*/
+        var edit = function() {
+            if (_AMT.reasoning) {
+                _AMT.reasoning = false;
+                $("#r-but").removeClass("blue");
+                $("#r-but").addClass("red");
+            } else {
+                _AMT.reasoning = true;
+                $("#r-but").removeClass("red");
+                $("#r-but").addClass("blue");
+            }
+            update();
+        };
         var openGraphPropModal = function(close) {
             $("#amt-viz").material_select();
             if (close)
@@ -526,89 +213,68 @@
             else
                 $("#graphPropModal").modal("open");
         }
+        var openRdfModal = function(close) {
+            if (close)
+                $("#rdfModal").modal("close");
+            else
+                $("#rdfModal").modal("open");
+        }
         var reloadGraphWithProperties = function() {
-            EAA.mode = $("#amt-viz").val();
+            _AMT.mode = $("#amt-viz").val();
             update();
             $("#graphPropModal").modal("close");
         }
-        var loadJSONGraphInApp = function() {
-            var json = JSON.parse($("#json").val());
-            for (var node in json.nodes) {
-                EAA.amt.addExistingIndividual(json.nodes[node].id, json.nodes[node].label, json.nodes[node].concept);
+        var exportRDF = function() {
+            var nodesAndEdges = "";
+            nodesAndEdges += "@prefix amt: <http://academic-meta-tool.xyz/vocab#> .\r\n";
+            nodesAndEdges += "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\r\n";
+            nodesAndEdges += "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\r\n";
+            nodesAndEdges += "@prefix rgzm: <http://rgzm.de/datingmechanism#> .\r\n";
+            nodesAndEdges += "\r\n";
+            for (var node in _AMT.thisNodes) {
+                nodesAndEdges += "rgzm:" + _AMT.thisNodes[node].id.replace(_AMT.prefix, "") + " amt:instanceOf" + " rgzm:" + _AMT.thisNodes[node].concept.replace(_AMT.prefix, "") + ".\r\n";
+                nodesAndEdges += "rgzm:" + _AMT.thisNodes[node].id.replace(_AMT.prefix, "") + " rdfs:label" + " \"" + _AMT.thisNodes[node].label + "\" .\r\n";
             }
-            for (var edge in json.edges) {
-                EAA.amt.addExistingAssertion(json.edges[edge].id, json.edges[edge].role, json.edges[edge].from, json.edges[edge].to, json.edges[edge].width);
+            nodesAndEdges += "\r\n";
+            for (var edge in _AMT.thisEdges) {
+                var emptyNode = "_:" + StrID();
+                nodesAndEdges += emptyNode + " rdf:subject" + " rgzm:" + _AMT.thisEdges[edge].from.replace(_AMT.prefix, "") + ".\r\n";
+                nodesAndEdges += emptyNode + " rdf:predicate" + " rgzm:" + _AMT.thisEdges[edge].role.replace(_AMT.prefix, "") + ".\r\n";
+                nodesAndEdges += emptyNode + " rdf:object" + " rgzm:" + _AMT.thisEdges[edge].to.replace(_AMT.prefix, "") + ".\r\n";
+                nodesAndEdges += emptyNode + " amt:weight" + " \"" + _AMT.thisEdges[edge].width.replace(_AMT.prefix, "") + "\"^^<http://www.w3.org/2001/XMLSchema#double> .\r\n";
+                if (nodesAndEdges.includes("Infinity")) {
+                    nodesAndEdges = nodesAndEdges.replace("Infinity", 1.0);
+                }
             }
-            update();
-            $("#loadModal").modal("close");
+            // COPY TO CLIPBOARD
+            $("#hiddenclipboard").text(nodesAndEdges);
+            copyToClipboard('#hiddenclipboard');
+            console.log(nodesAndEdges);
+            _AMT.rdf = nodesAndEdges;
+            // OPEN MODAL
+            $("#rdf").val(nodesAndEdges);
+            openRdfModal();
         }
     </script>
 </head>
 
 <body>
     <div id="graph" class="col s12"></div>
-    <div id="footer" class="page-footer col s12 blue lighten-3">
+    <div id="footer" class="page-footer col s12 orange lighten-3">
         <div class="container">
             <div class="row">
-                <div id="props" class="col s2 left-align">
-                    <a class="btn-floating btn-large black" onclick="info()" title="about AMT"><i class="material-icons">info_outline</i></a>
-                    <!--<a class="btn-floating btn-large black" onclick="exportOptions()" title="download data"><i class="material-icons">file_download</i></a>-->
-                    <a class="btn-floating btn-large black" onclick="openGraphPropModal()" title="change view"><i class="material-icons">palette</i></a>
+                <div id="props" class="col s5 left-align">
+                    <a class="btn-floating btn-large blue" onclick="openGraphPropModal()" title="change example"><i class="material-icons">sync</i></a>
+                    <a class="btn-floating btn-large brown" onclick="exportRDF()" title="get RDF"><i class="material-icons">share</i></a>
                 </div>
-                <div id="buttons" class="col s6 right-align">
-                    <a class="btn-floating btn-large blue" id="r-but" onclick="edit()" title="show reasoning data"><i class="material-icons">flash_on</i></a>
-                    <!--<a class="btn-floating btn-large normal blue" id="e-but" onclick="edit()" title="show input data"><i class="material-icons">input</i></a>-->
+                <div id="buttons" class="col s7 left-align">
+                    <a class="btn-floating btn-large red" id="r-but" onclick="edit()" title="reasoning on/off"><i class="material-icons">bubble_chart</i></a>
+                    <span style="padding-left:30px;font-weight:bold;" id="title">loading...</span>
                 </div>
-                <div id="store" class="col s4 left-align">
-                    <div><a class="btn-floating btn-large edit red" onclick="cancel()" title="Cancel changes"><i class="material-icons">cancel</i></a></div>
-                    <div id="save"><a class="btn-floating btn-large normal black" onclick="save()" title="Save changes"><i class="material-icons">save</i></a></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="modal" class="modal">
-        <input id="uri" hidden />
-        <input id="concept" hidden />
-        <div class="modal-content">
-            <div class="row">
-                <div class="input-field col s9">
-                    <input id="label" type="text" placeholder="-" />
-                    <label for="label">Label</label>
-                </div>
-                <div class="col s3 right-align">
-                    <a class="btn-floating btn-large red" onclick="remove()" title="Delete node"><i class="material-icons">delete</i></a>
-                    <a class="btn-floating btn-large green" onclick="saveEdit()" title="Save changes"><i class="material-icons">save</i></a>
-                    <a class="btn-floating btn-large blue" onclick="cancelEdit()" title="Cancel changes"><i class="material-icons">cancel</i></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <select id="role"></select>
-                    <label for="role">Relation</label>
-                </div>
-            </div>
-            <div class="row">
-                <table class="bordered col s12">
-                    <thead>
-                        <tr>
-                            <th>Individuum</th>
-                            <th>Gewicht</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table"></tbody>
-                </table>
             </div>
         </div>
     </div>
     <!-- Modals -->
-    <div id="info" class="modal">
-        <div class="modal-content">
-            <br>
-            <p><b>About the Creators and the Data</b></p>
-            <br>
-            <p>* AMT Software by Florian Thiery, Martin Unold (i3mainz).<br>* Data by Florian Thiery and Dr. Allard Mees (RGZM).</p>
-        </div>
-    </div>
     <div id="graphPropModal" class="modal">
         <div class="modal-content">
             <h4>Please choose an example:</h4>
@@ -617,21 +283,43 @@
                 <div class="row">
                     <div class="input-field col s11">
                         <select id="amt-viz">
-                                <option value="siteLimesProvince">site, limes parts and provinces</option>
-                                <option value="potterSiteLimes">potter, site and limes parts</option>
-                                <option value="limesConnections" selected>limes connections by same potter</option>
-                                <option value="limesAllen">limes relative chronology by Allen</option>
+                                <option value="example1" selected>Hadrian's Wall->Wetteraulimes->Elisabethenstraße</option>
+                                <option value="example2">Elisabethenstraße->Wetteraulimes->Hadrian's Wall</option>
+                                <option value="example3">Neckarlimes->Wetteraulimes->Alblimes</option>
+                                <option value="example4">Alblimes->Wetteraulimes->Neckarlimes</option>
+                                <option value="example5">Hadrian's Wall->Wetteraulimes->Elisabethenstraße (Pearson)</option>
+                                <option value="example6">Neckarlimes->Wetteraulimes->Alblimes (Pearson)</option>
 							</select>
                         <label>visualisation style</label>
                     </div>
-                    <p style="padding-left:10px"><input type="checkbox" id="showGeomConcepts" /><label for="showGeomConcepts">show geometry concepts</label></p>
-                    <p style="padding-left:10px"><input type="checkbox" id="showEdges" checked /><label for="showEdges">show edges</label></p>
                     <div class="col s1">
                         <a class="btn-floating btn-large green" onclick="reloadGraphWithProperties()" title="reload"><i class="material-icons">check</i></a>
                     </div>
                 </div>
             </form>
         </div>
+    </div>
+    <div id="rdfModal" class="modal">
+        <div class="modal-content" style="border:1px black solid;width:100%;height:100%;padding:20px;margin:0px;">
+            <textarea id="rdf" style="width:100%;height:100%;font-family:'Courier New';font-size:14px;"></textarea>
+        </div>
+    </div>
+    <!-- Info DIV -->
+    <div class="info">
+        <h4>AMT. EAA 2018, Barcelona.</h4>
+        Software by Florian Thiery (RGZM) and Martin Unold (i3mainz).
+        <br> Data concept by A.W. Mees (RGZM).
+        <br><br>
+        <a class="btn-floating btn-small red"><i class="material-icons">bubble_chart</i></a>&nbsp;<i>reasoning on</i>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a class="btn-floating btn-small blue"><i class="material-icons">bubble_chart</i></a>&nbsp;<i>reasoning off</i>
+        <br><br>
+        <a class="btn-floating btn-small blue"><i class="material-icons">sync</i></a>&nbsp;<i>change example</i>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a class="btn-floating btn-small brown"><i class="material-icons">share</i></a>&nbsp;<i>get RDF</i>
+    </div>
+    <div class="logos">
+        <a href="http://academic-meta-tool.xyz" target="_blank"><img src="amt_logos.png" height="200"></a>
     </div>
 </body>
 
