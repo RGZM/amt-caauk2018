@@ -1,6 +1,6 @@
 # amt-caauk2018
 
-This is an example of the Academic Meta Tool for the talk `0`  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.abc.svg)](https://doi.org/10.5281/zenodo.abc) at `CAA-UK 2018`. It is based on the Academic Meta Tool Ontology [![AMT](https://img.shields.io/badge/html-leonard-brightgreen.svg?style=flat)](http://academic-meta-tool.xyz/ontology/). More about AMT at [http://academic-meta-tool.xyz](http://academic-meta-tool.xyz/).
+This is an example of the Academic Meta Tool for the talk `Taming the chronology of South Gaulish Samian found at Hadrian's Wall and the German Limes using Linked Open Data`  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1469298.svg)](https://doi.org/10.5281/zenodo.1469298) at `CAA-UK 2018`. It is based on the Academic Meta Tool. More about AMT at [http://academic-meta-tool.xyz](http://academic-meta-tool.xyz/).
 
 ## Webapp
 
